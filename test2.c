@@ -4,8 +4,8 @@
 #include <gsl/gsl_odeiv.h>
 #include <math.h>
 
-#define hbar 1.05e-34
-#define m 1e-30
+#define hbar 1.05e-10
+#define m 1e-3
 #define V 0
 #define pi 3.14
 #define L tmax
@@ -70,7 +70,7 @@ int main () {
             gsl_odeiv_evolve_apply (evolve_ptr, control_ptr, step_ptr, &my_system, &t, t_next, &h, y);
         }
         fprintf(fpt,"%.5e, %.5e,\n", t, y[0]);
-        printf ("%.5e %.5e\n", t, y[0]);
+        printf ("%.5e %.5e %.5e %.5e\n", t, y[0], y[1], y[2]);
     }
 
     fclose(fpt);   
