@@ -1,6 +1,6 @@
 #include "src/Fonction_de_potentiel.h"
 
-int n = 100; //Cette valeur définie le niveau d'énergie
+int n = 1; //Cette valeur définie le niveau d'énergie
 
 double L = 1;
 

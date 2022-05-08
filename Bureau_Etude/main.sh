@@ -16,11 +16,11 @@
 main_menu() {
 
 	whiptail --title "Main menu" --yesno --yes-button "Proceder au calcul" --no-button "Sortir" "Bienvenue dans l'assistant de résolution de \
-	 l'équation de Shrodinger dans le cas du puit de potentiel. \n \nVous allez devoir modifier le fichier nommé 'Fonction_de_potentiel.c'
-	 \n ou le laisser intacte pour calculer le cas d'un potentiel nul" 15 80
+	 l'équation de Shrodinger dans le cas du puits de potentiel. \n \nVous allez devoir modifier le fichier nommé 'Fonction_de_potentiel.c'
+	 \n ou le laisser intact pour calculer le cas d'un potentiel nul" 15 80
 	if [ $? -eq 0 ] ; then
 		gcc -c Fonction_de_potentiel.c -o src/Fonction_de_potentiel.o
-		gcc -o src/main -lgsl -lgslcblas -lm src/main.c src/Fonction_de_potentiel.o
+		gcc -o src/main src/main.c -lgsl -lgslcblas -lm src/Fonction_de_potentiel.o #-Wall -Wextra
 		rm src/Fonction_de_potentiel.o
 		./src/main
 		mv MyFile.csv resultats

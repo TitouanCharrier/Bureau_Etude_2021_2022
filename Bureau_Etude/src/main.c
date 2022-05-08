@@ -8,12 +8,12 @@
 
 #include "Fonction_de_potentiel.h"
 
-#define hbar 1.05e-1
-#define m 1e-3
+#define hbar 1.05e-1 // yg*nm*nm/ps
+#define m 1e-3  // yg
 #define pi 3.14
 
 extern int n;
-extern double L;
+extern double L; // nm
 
 int ShrodingerFunction (double x, const double y[], double dy[], void *params_ptr) {
     double E = *(double *) params_ptr;
@@ -32,8 +32,6 @@ int Solve (const gsl_vector * x, void *params, gsl_vector * f_vector) {
   double New_E = gsl_vector_get (x, 0);
   double New_z = gsl_vector_get (x, 1);
 
-  int dimension = 3;
-
   double error_H = 1.e-8;
   double error_L = 1.e-10;
 
@@ -50,14 +48,11 @@ int Solve (const gsl_vector * x, void *params, gsl_vector * f_vector) {
   //printf("New_E=%f \t New_z=%f\n", New_E, New_z );
 
   //ligne temporelle
-  double t, t_next;
-  double tmin, delta_t;
+  double t;
+  double tmin;
   tmin = 0.;
-  delta_t = 0.01;
 
   t = tmin;
-
-  double h = 6.626e-1;
 
       gsl_odeiv2_driver_apply (d, &t, L, y);
 
@@ -75,21 +70,21 @@ int Solve (const gsl_vector * x, void *params, gsl_vector * f_vector) {
 }
 
 int print_state (size_t iter, gsl_multiroot_fsolver * s) {
-  printf ("iter = %3u \t E = %.3f \t z = %.3f \t "
+  printf ("iter = %3lu \t E = %.3f \t z = %.3f \t "
           "f(x) = %.3e \t Normalisation = %.3e\n",
           iter,
           gsl_vector_get (s->x, 0),
           gsl_vector_get (s->x, 1),
           gsl_vector_get (s->f, 0),
           gsl_vector_get (s->f, 1));
+  return 0;
 }
 
 int main () {
 
-  double E = n*n*(hbar*hbar*pi*pi)/(2*m*L*L);
-  double z = sqrt(2/L)*sqrt(2*m*E/hbar);
+  double E = n*n*(hbar*hbar*pi*pi)/(2*m*L*L); // yg*nm*nm/(ps*ps)
+  double z = sqrt(2/L)*sqrt(2*m*E/hbar); // yg^1/2 *nm^1/2 /ps^1/2
 
-  int dimension = 3;
 
   double error_H = 1.e-8;
   double error_L = 1.e-10;
@@ -112,7 +107,7 @@ int main () {
   gsl_multiroot_fsolver *s;
 
   int status;
-  size_t i, iter = 0;
+  size_t iter = 0;
 
   const size_t N = 2;
 
@@ -148,7 +143,11 @@ int main () {
   E = gsl_vector_get (s->x, 0);
   z = gsl_vector_get (s->x, 1);
 
-  printf("\nResultats :\n\n pour n=%d et L=%f : \n\n E = %f, \t z = %f\n\n", n, L, E, z);
+  double E_ev=E/(1.602*100);  // transformation en Ev avec 1ev = 1.602.e-19 J
+                              // Z en SI : Z = Z*10^(-12) kg^1/2 * m^1/2 * s^(-1/2)
+                              // L en SI = L*10^(-9) m 
+
+  printf("\nResultats :\n\n pour n=%d et L=%f nm : \n\n E = %f Ev, \t z = %f.10^(-12) unités SI \n E = %f J \n", n, L, E_ev, z, E);
 
   double y[3];
   y[0] = 0.;
@@ -156,8 +155,6 @@ int main () {
   y[2] = 0.;
 
   t = tmin;
-
-  double h = 6.626e-1;
 
   FILE *fpt; fpt = fopen("MyFile.csv", "w");
   fprintf(fpt,"%lf, %lf,\n", t, y[0]);
